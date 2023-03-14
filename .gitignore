@@ -1,0 +1,8 @@
+__pycache__
+.DS_Store
+test.ipynb
+data/
+.env
+qa_test.ipynb
+chroma_logs.log
+.chroma
