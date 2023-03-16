@@ -6,3 +6,4 @@ data/
 qa_test.ipynb
 chroma_logs.log
 .chroma
+test_time.ipynb

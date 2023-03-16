@@ -1,12 +1,6 @@
-import transription_utils
+import transcription_utils
 
-audio_test = transription_utils.audio('data/testrec.wav', threshold=5)
-times = audio_test.speechTime
-clean = audio_test.cleanedTime
-
-
-
-
-
-print('TEST', audio_test.speechTime)
-print('CLEAN', audio_test.cleanedTime)
+audio_test = transcription_utils.audio('data/weights_1.wav')
+print(audio_test.file)
+times = audio_test.get_clean_sections(threshold=5)
+mapper = audio_test.time_mapper(times)
