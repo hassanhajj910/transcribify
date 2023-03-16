@@ -88,23 +88,21 @@ class audio():
         rate = self.sample_rate
         waveform = self.waveform
         # read file as pydub
-        cleanAudio = AudioSegment.empty()
+        # cleanAudio = AudioSegment.empty()
         # wav = AudioSegment.from_wav(file)
         # cut files based on audio clip times in times. 
-        w_list, t_list = [], []
-        for i, time in enumerate(times):
+        c1, c2 = [], []
+        for time in times:
             t1 = int(time[0])*rate
             t2 = int(time[1])*rate
             temp_wave = waveform[:, t1:t2]
-            t_list.append(temp_wave[0,1])
-            if i == 0:
-                continue
-            else:
-              
-
+            c1.append(temp_wave[0,:])
+            c2.append(temp_wave[1,:])
             #seg = wav[int(time[0]*1000):int(time[1]*1000)]
             #cleanAudio = cleanAudio + seg
-        return cleanAudio
+        
+        cleanWave = np.hstack([c1, c2]) 
+        return cleanWave
     
     def time_mapper(self, times=None):
         if times is None:
