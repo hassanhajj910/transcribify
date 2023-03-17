@@ -6,6 +6,8 @@ from dotenv import dotenv_values
 import numpy as np
 from pydub import AudioSegment
 import torchaudio
+import torch
+
 
 key_config = dotenv_values('.env')
 
@@ -50,7 +52,7 @@ class audio():
         times = np.array(times)
         times = np.sort(times, axis=0)
         
-        return times
+        return np.array(times)
 
     def get_clean_sections(self, times=None, threshold=None):
         # threshold has to be positive
@@ -79,30 +81,24 @@ class audio():
                 init_range = np.array([times[i+1][0], times[i+1][1]])
         if res is True:
             group.append(init_range)
-        return group
+        return np.array(group)
     
     def clean_audio(self, times:np.array):
         # add exceptions and errors
 
-        file = self.file
         rate = self.sample_rate
         waveform = self.waveform
-        # read file as pydub
-        # cleanAudio = AudioSegment.empty()
-        # wav = AudioSegment.from_wav(file)
-        # cut files based on audio clip times in times. 
-        c1, c2 = [], []
-        for time in times:
-            t1 = int(time[0])*rate
-            t2 = int(time[1])*rate
-            temp_wave = waveform[:, t1:t2]
-            c1.append(temp_wave[0,:])
-            c2.append(temp_wave[1,:])
-            #seg = wav[int(time[0]*1000):int(time[1]*1000)]
-            #cleanAudio = cleanAudio + seg
         
-        cleanWave = np.hstack([c1, c2]) 
-        return cleanWave
+        times = times.astype(int)
+        times_sr = times * rate
+        waveform_tensor = torch.tensor(waveform)
+        indices = []
+        for t in times_sr:
+            indices.extend(list(range(t[0],t[1])))
+        indices = torch.tensor(indices)
+        clean_wave = waveform_tensor.index_select(1, indices)
+        return clean_wave, rate
+
     
     def time_mapper(self, times=None):
         if times is None:
@@ -117,5 +113,6 @@ class audio():
         time_mapper = dict(zip(newtime, mod_time))
         return time_mapper
     
+    # def speech_diarization(self, )
     
 
