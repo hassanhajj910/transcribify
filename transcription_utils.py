@@ -7,10 +7,11 @@ import numpy as np
 from pydub import AudioSegment
 import torchaudio
 import torch
+import librosa
 
 
 key_config = dotenv_values('.env')
-
+SAMPLE_RATE = 16000
 
 def time_overlap(x, y):
     res = list(range(max(int(x[0]), int(y[0])), min(int(x[-1]), int(y[-1]))+1))
@@ -20,6 +21,8 @@ def time_overlap(x, y):
         over = False
     return over
 
+
+
 # make functions callable instead of running in the object. 
 class audio():
     MODELS_AVAILABLE = {
@@ -28,17 +31,21 @@ class audio():
         'pyannote/segmentation'
     }
 
+
     def __init__(self, filepath:str) -> None:
         self.file = filepath
-        self.waveform, self.sample_rate = torchaudio.load(filepath)
+        self.waveform, self.sample_rate = self.load_file()
         
+    def load_file(self):
+        waveform, sample_rate = torchaudio.load(self.file)
+        waveform = librosa.resample(np.array(waveform), orig_sr=sample_rate, target_sr=SAMPLE_RATE)
+        return waveform, SAMPLE_RATE
 
-
-
-    def set_pipeline(self): # can add options here
+    def get_speaker_sections(self): # can add options here
         pipeline = Pipeline.from_pretrained("pyannote/speaker-diarization@2.1",
                                     use_auth_token=key_config['HF_PYANNOTE_DIARIZATION'])
-        return pipeline
+        
+        diary = pipeline({'waveform':torch.Tensor(self.waveform), 'sample_rate':self.sample_rate})
     
     def get_speech_sections(self):
 
