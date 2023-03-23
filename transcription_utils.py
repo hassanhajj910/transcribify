@@ -38,7 +38,11 @@ class audio():
         
     def load_file(self):
         waveform, sample_rate = torchaudio.load(self.file)
+        waveform = waveform[0,:]    # take one channel in cases of stereo audio
+        waveform = waveform.unsqueeze(0)
         waveform = librosa.resample(np.array(waveform), orig_sr=sample_rate, target_sr=SAMPLE_RATE)
+        #waveform, sample_rate = librosa.load(self.file, sr = SAMPLE_RATE)
+        print(waveform.shape)
         return waveform, SAMPLE_RATE
 
     def get_speaker_sections(self): # can add options here
@@ -46,7 +50,34 @@ class audio():
                                     use_auth_token=key_config['HF_PYANNOTE_DIARIZATION'])
         
         diary = pipeline({'waveform':torch.Tensor(self.waveform), 'sample_rate':self.sample_rate})
+        diary = diary.for_json()
+        content = diary['content']
+        speaker_times, speaker = [[] for x in range(2)]
+        for segment in content:
+            s = int(np.round(segment['segment']['start']))
+            e = int(np.round(segment['segment']['end']))
+            speaker = segment['label']
+            speaker_times.append([s,e, speaker])
+        speaker_times = np.array(speaker_times)
+        return speaker_times
     
+    def transcribe(self, speaker_times:np.array, outfile:str):
+        # load model
+        model = whisper.load_model("base")
+        text = []
+        wav = self.waveform
+        wav = torch.Tensor(wav)
+        wav = wav.squeeze(0)
+        print(wav.shape)
+        with open(outfile, 'w+') as f:
+            for speech in speaker_times:
+                wav_section = wav[int(speech[0])*SAMPLE_RATE:int(speech[1])*SAMPLE_RATE]
+                res = model.transcribe(wav_section, language = 'de')
+                text.append('{}:{}\n\n'.format(speech[2], res['text']))
+                f.writelines(text[-1])
+        
+
+
     def get_speech_sections(self):
 
         pipeline = Pipeline.from_pretrained("pyannote/voice-activity-detection", use_auth_token=key_config["HP_PYANNOTE_VOICEACTIVITY"])
