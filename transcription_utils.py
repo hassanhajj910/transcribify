@@ -4,7 +4,6 @@ import pyannote.core
 from pyannote.audio import Pipeline
 from dotenv import dotenv_values
 import numpy as np
-from pydub import AudioSegment
 import torchaudio
 import torch
 import librosa
@@ -42,7 +41,6 @@ class audio():
         waveform = waveform.unsqueeze(0)
         waveform = librosa.resample(np.array(waveform), orig_sr=sample_rate, target_sr=SAMPLE_RATE)
         #waveform, sample_rate = librosa.load(self.file, sr = SAMPLE_RATE)
-        print(waveform.shape)
         return waveform, SAMPLE_RATE
 
     def get_speaker_sections(self): # can add options here
@@ -63,7 +61,7 @@ class audio():
     
     def transcribe(self, speaker_times:np.array, outfile:str):
         # load model
-        model = whisper.load_model("base")
+        model = whisper.load_model("large")
         text = []
         wav = self.waveform
         wav = torch.Tensor(wav)
@@ -80,7 +78,7 @@ class audio():
 
     def get_speech_sections(self):
 
-        pipeline = Pipeline.from_pretrained("pyannote/voice-activity-detection", use_auth_token=key_config["HP_PYANNOTE_VOICEACTIVITY"])
+        pipeline = Pipeline.from_pretrained("pyannote/voice-activity-detection", use_auth_token=key_config["HF_PYANNOTE_VOICEACTIVITY"])
         speech_segment = pipeline(self.file)
         speech_segment_tl = speech_segment.get_timeline()
         times = []
