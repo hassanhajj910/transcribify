@@ -89,7 +89,7 @@ class audio():
             for speech in speaker_times:
                 wav_section = wav[int(speech[0])*SAMPLE_RATE:int(speech[1])*SAMPLE_RATE]        # NB. convert times from second to waverate by multiplying with SAMPLE_RATE. 
                 # TODO add language to arguments. 
-                res = model.transcribe(wav_section, language = 'de')        # language setting here 
+                res = model.transcribe(wav_section, language = 'en')        # language setting here 
                 text.append('{}:{}\n\n'.format(speech[2], res['text']))     # write line
                 f.writelines(text[-1])
         
