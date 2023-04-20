@@ -64,7 +64,10 @@ class audio():
                                     use_auth_token=key_config['HF_PYANNOTE_DIARIZATION'])
         
         diary = pipeline({'waveform':torch.Tensor(self.waveform), 'sample_rate':self.sample_rate})      # run model
-        diary = diary.for_json()        # conver to json
+        print('Pre', diary)
+        print(type(diary))
+        diary = diary.for_json()        # convert to json
+        print('JSON', diary)
         content = diary['content']      # get content from json
         speaker_times, speaker = [[] for x in range(2)] 
 
