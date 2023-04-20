@@ -1,6 +1,6 @@
 import whisper
-import pyannote.audio
-import pyannote.core
+#import pyannote.audio
+#import pyannote.core
 from pyannote.audio import Pipeline
 from dotenv import dotenv_values
 import numpy as np
@@ -33,7 +33,7 @@ class audio():
     MODELS_AVAILABLE = {
         'pyannote/voice-activity-detection',
         'pyannote/speaker-diarization@2.1', 
-        'pyannote/segmentation'
+        #'pyannote/segmentation'
     }
 
 
@@ -45,9 +45,11 @@ class audio():
         """
         Loads audio file and converts it into a default SAMPLE_RATE, set at 16000. 
         """
+        print('Loading file')
         waveform, sample_rate = torchaudio.load(self.file)
         waveform = waveform[0,:]    # take one channel in cases of stereo audio
         waveform = waveform.unsqueeze(0)
+        print('Resample')
         waveform = librosa.resample(np.array(waveform), orig_sr=sample_rate, target_sr=SAMPLE_RATE)
         #waveform, sample_rate = librosa.load(self.file, sr = SAMPLE_RATE)
         return waveform, SAMPLE_RATE
