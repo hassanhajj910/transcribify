@@ -1,10 +1,16 @@
 __pycache__
 .DS_Store
 test.ipynb
-data/
+data_deprecated/
 .env
 qa_test.ipynb
 chroma_logs.log
 .chroma
 test_time.ipynb
 test_whisper.ipynb
+
+data/*
+!data/.gitkeep
+
+results/*
+!results/.gitkeep
