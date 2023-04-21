@@ -27,14 +27,14 @@ for wavfile in allwav:
     print('step 3')
     clean, rate = audio_test.clean_audio(times)
     print('step 4')
-    #speaker_times = audio_test.get_speaker_sections()
+    speaker_times = audio_test.get_speaker_sections()
     print('step 5')
 
     se = re.search(RE_EXP, wavfile)
     textname = str(se.group(1)) + '.txt'
     textname = os.path.join(args['output'], textname)
     print(textname)
-    #audio_test.transcribe(speaker_times, args['output'])
+    audio_test.transcribe(speaker_times, args['output'])
     iter_end = time.time()
     iter_time = iter_end - iter_start
     iter_time = iter_time/60
