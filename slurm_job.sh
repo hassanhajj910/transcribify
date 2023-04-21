@@ -1,7 +1,7 @@
 #!/bin/sh
 #SBATCH -p gpu
 #SBATCH -n 1
-#SBATCH -G 1
+#SBATCH -G gtx1080:2
 #SBATCH --mem=50G
 #SBATCH -o outfile.%J
 #SBATCH --mail-user=hhajj@mpiwg-berlin.mpg.de
