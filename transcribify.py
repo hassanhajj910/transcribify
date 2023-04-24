@@ -33,8 +33,7 @@ for wavfile in allwav:
     se = re.search(RE_EXP, wavfile)
     textname = str(se.group(1)) + '.txt'
     textname = os.path.join(args['output'], textname)
-    print(textname)
-    audio_test.transcribe(speaker_times, args['output'])
+    audio_test.transcribe(speaker_times, textname)
     iter_end = time.time()
     iter_time = iter_end - iter_start
     iter_time = iter_time/60
