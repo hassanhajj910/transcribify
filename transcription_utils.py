@@ -82,7 +82,7 @@ class audio():
         Run OpenAI Whisper to transcribe each speech section, based on speaker_times from the diarization process. 
         Retuns a text file in outfile dir. 
         """
-        model = whisper.load_model("large")
+        model = whisper.load_model("medium")
         text = []
         wav = self.waveform         
         wav = torch.Tensor(wav)     # convert to tensor
